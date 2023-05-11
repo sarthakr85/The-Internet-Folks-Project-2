@@ -52,6 +52,10 @@ const FormSelect: React.FC<IFormSelectProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         options={options}
+        menuPortalTarget={
+          typeof document !== "undefined" ? document.body : null
+        }
+        menuPosition={"fixed"}
         // styles
         styles={{
           container: (base) => ({
