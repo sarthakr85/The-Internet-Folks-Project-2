@@ -3,6 +3,7 @@ import { useTheme } from "@chakra-ui/react";
 import FromWrapper from "./FormWrapper";
 import { IFormInputProps } from "@src/interface/forms";
 import ReactSelect, { Props } from "react-select";
+import { useData, initialValues } from "@src/containers/home/DataProvider";
 
 interface IFormSelectProps
   extends Omit<IFormInputProps, "inputProps" | "type" | "onChange" | "onBlur"> {
@@ -29,7 +30,38 @@ const FormSelect: React.FC<IFormSelectProps> = ({
 }) => {
   const theme = useTheme();
 
+  const { state, setState } = useData() ?? {
+    state: initialValues,
+    setState: () => {},
+  };
+
   const handleChange = (value: any) => {
+    const updatedValues = { ...state };
+
+    let propertyName = "";
+
+    if (label) {
+      propertyName =
+        typeof label === "string"
+          ? label
+              .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+                return index === 0 ? word.toLowerCase() : word.toUpperCase();
+              })
+              .replace(/\s+/g, "")
+          : "";
+    }
+
+    if (propertyName === "gender" || propertyName === "urgency") {
+      updatedValues.requisitionDetails[propertyName] = value.value;
+    } else if (
+      propertyName === "interviewDuration" ||
+      propertyName === "interviewLanguage" ||
+      propertyName === "interviewMode"
+    ) {
+      updatedValues.interviewSettings[propertyName] = value.value;
+    }
+
+    setState(updatedValues);
     onChange && onChange(name, value?.value);
   };
   const handleBlur = () => {
