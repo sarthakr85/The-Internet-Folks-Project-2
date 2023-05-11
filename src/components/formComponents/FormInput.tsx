@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import { IFormInputProps } from "@src/interface/forms";
+import { useData, initialValues } from "@src/containers/home/DataProvider";
 
 const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
   (
@@ -22,6 +23,30 @@ const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
     },
     ref
   ) => {
+    const { state, setState } = useData() || {
+      state: initialValues,
+      setState: () => {},
+    };
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+      const updatedValues = { ...state };
+
+      // update the property with the new value but before that cross check the property name
+      if (name === "requisitionTitle" || name === "noOfOpenings") {
+        updatedValues.requisitionDetails[name] = value;
+      } else if (
+        name === "jobDetails" ||
+        name === "jobLocation" ||
+        name === "jobTitle"
+      ) {
+        updatedValues.jobDetails[name] = value;
+      }
+
+      // update the state with the new values
+      setState(updatedValues);
+      onChange && onChange(event);
+    };
     return (
       <FormWrapper
         isInvalid={Boolean(error && touched)}
@@ -36,7 +61,7 @@ const FormInput = React.forwardRef<HTMLInputElement, IFormInputProps>(
           placeholder={placeholder}
           type={type}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           onBlur={onBlur}
           // styles
           width="100%"

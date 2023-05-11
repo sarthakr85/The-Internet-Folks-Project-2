@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 export const initialValues = {
   requisitionDetails: {
     gender: "",
-    noOfOpenings: 0,
+    noOfOpenings: "",
     requisitionTitle: "",
     urgency: "",
   },
